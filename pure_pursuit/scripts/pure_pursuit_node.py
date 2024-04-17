@@ -34,33 +34,14 @@ class PurePursuit(Node):
 
         # ROS Params
         self.declare_parameter("visualize")
-
-        self.declare_parameter("lane_occupied_dist")
-        self.declare_parameter("obs_activate_dist")
-
         self.declare_parameter("real_test")
         self.declare_parameter("map_name")
         self.declare_parameter("num_lanes")
         self.declare_parameter("lane_files")
         self.declare_parameter("traj_file")
+        
+        self.declare_parameter('max_steer')
 
-        self.declare_parameter("lookahead_distance")
-        self.declare_parameter("lookahead_attenuation")
-        self.declare_parameter("lookahead_idx")
-        self.declare_parameter("lookbehind_idx")
-
-        self.declare_parameter("kp_steer")
-        self.declare_parameter("ki_steer")
-        self.declare_parameter("kd_steer")
-        self.declare_parameter("max_steer")
-        self.declare_parameter("alpha_steer")
-
-        self.declare_parameter("kp_pos")
-        self.declare_parameter("ki_pos")
-        self.declare_parameter("kd_pos")
-
-        self.declare_parameter("follow_speed")
-        self.declare_parameter("lane_dist_thresh")
 
         # interp
         self.declare_parameter('minL')
@@ -80,11 +61,6 @@ class PurePursuit(Node):
         self.declare_parameter('Pscale_corner')
         self.declare_parameter('Lscale_corner')
 
-        self.declare_parameter('avoid_v_diff')
-        self.declare_parameter('avoid_L_scale')
-        self.declare_parameter('pred_v_buffer')
-        self.declare_parameter('avoid_buffer')
-        self.declare_parameter('avoid_span')
 
         # PID Control Params
         self.prev_steer_error = 0.0
@@ -96,10 +72,9 @@ class PurePursuit(Node):
         self.real_test = self.get_parameter("real_test").get_parameter_value().bool_value
         self.map_name = self.get_parameter("map_name").get_parameter_value().string_value
         print(self.map_name)
-        # Lanes Waypoints
+
         self.num_lanes = self.get_parameter("num_lanes").get_parameter_value().integer_value
         self.lane_files = self.get_parameter("lane_files").get_parameter_value().string_array_value
-
         self.num_lane_pts = []
         self.lane_x = []
         self.lane_y = []
@@ -120,8 +95,6 @@ class PurePursuit(Node):
         self.traj_y = self.lane_y[-1][:]
         self.traj_v = self.lane_v[-1][:]
         self.traj_pos = self.lane_pos[-1][:]
-        print(f'length of last lane{len(self.lane_pos[-1])}')
-        print(f'max v{np.max(self.lane_v[-1])}')
         # In pure pursuit mode, we do not overtake or car-follow
         self.overtake_wpIdx = set()
         self.slow_wpIdx = set()
@@ -147,8 +120,6 @@ class PurePursuit(Node):
         self.odom_sub_ = self.create_subscription(Odometry, odom_topic, self.odom_callback, 1)
         self.drive_pub_ = self.create_publisher(AckermannDriveStamped, drive_topic, 10)
         self.waypoint_pub_ = self.create_publisher(Marker, waypoint_topic, 10)
-
-        print('node_init_files')
 
     def odom_callback(self, odom_msg: Odometry):
         self.curr_vel = odom_msg.twist.twist.linear.x

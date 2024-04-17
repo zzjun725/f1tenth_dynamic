@@ -33,24 +33,19 @@ def generate_launch_description():
 
             # RVIZ Params
             {"visualize": True},
+            
+            
+            {'max_steer': 0.35},
 
-            # Obstacle Params
-            {"lane_occupied_dist": 0.3},
-            {"obs_activate_dist": 2.0},
-
-
-            # Speed Params
-            {"follow_speed": 2.0},
-            {"lane_dist_thresh": 0.3},
 
             # interp
             {'minL': 0.5},
             {'maxL': 2.0},
             {'minP': 0.4},
-            {'maxP': 0.7},
+            {'maxP': 0.8},
             {'interpScale': 20},
-            {'Pscale': 5.0},
-            {'Lscale': 5.0},
+            {'Pscale': 6.0},
+            {'Lscale': 6.0},
             {'D': 2.0},
             {'vel_scale': 0.7},
 
